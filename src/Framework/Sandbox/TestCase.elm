@@ -70,7 +70,7 @@ addActions =
     Internal.addActions
 
 
-{-| Mock the respons on msgOut's
+{-| Mock a response message whenever a msgOut gets called
 -}
 mockMsgOut :
     (componentMsgOut -> Maybe componentMsgIn)
