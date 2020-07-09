@@ -7,7 +7,7 @@
     "elm-live": "^4.0.2"
   },
   "scripts": {
-    "start": "elm-live ./src/Main.elm -- --debug",
-    "build": "elm make src/Main.elm --output ../docs/index.html"
+    "start": "elm-live ./src/Sandbox/Components/Timer/Main.elm -- --debug",
+    "build": "elm make src/Sandbox/Components/Timer/Main.elm --output ../docs/index.html"
   }
 }

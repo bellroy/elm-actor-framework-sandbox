@@ -1,4 +1,4 @@
-module Framework.Internal.SandboxComponent exposing
+module Framework.Sandbox.Internal.SandboxComponent exposing
     ( SandboxComponent
     , addTestCase
     , fromComponent
@@ -9,15 +9,14 @@ module Framework.Internal.SandboxComponent exposing
     )
 
 import Framework.Actor exposing (Component)
-import Framework.Internal.TestCases as TestCases exposing (TestCases)
-import Framework.Internal.TestCases.TestCase exposing (TestCase)
-import Framework.Message exposing (FrameworkMessage)
+import Framework.Sandbox.Internal.TestCases as TestCases exposing (TestCases)
+import Framework.Sandbox.Internal.TestCases.TestCase exposing (TestCase)
 
 
 type SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output
     = SandboxComponent
         { component :
-            Component appFlags componentModel componentMsgIn componentMsgOut output (FrameworkMessage appFlags () () componentModel componentMsgIn)
+            Component appFlags componentModel componentMsgIn componentMsgOut output componentMsgIn
         , init : appFlags
         , testCases : TestCases appFlags componentModel componentMsgIn componentMsgOut output
         }
@@ -25,7 +24,7 @@ type SandboxComponent appFlags componentModel componentMsgIn componentMsgOut out
 
 fromComponent :
     appFlags
-    -> Component appFlags componentModel componentMsgIn componentMsgOut output (FrameworkMessage appFlags () () componentModel componentMsgIn)
+    -> Component appFlags componentModel componentMsgIn componentMsgOut output componentMsgIn
     -> SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output
 fromComponent appFlags component =
     SandboxComponent
@@ -59,7 +58,7 @@ updateTestCase testCase (SandboxComponent sandboxComponent) =
 
 toComponent :
     SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output
-    -> Component appFlags componentModel componentMsgIn componentMsgOut output (FrameworkMessage appFlags () () componentModel componentMsgIn)
+    -> Component appFlags componentModel componentMsgIn componentMsgOut output componentMsgIn
 toComponent (SandboxComponent { component }) =
     component
 

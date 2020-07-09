@@ -1,39 +1,53 @@
 module Framework.Sandbox.TestCase exposing
-    ( TestCase
-    , addActions
-    , make
-    , reInit
-    , setActions
-    , toDescription
-    , toTitle
+    ( TestCase, make
+    , addActions, setActions
+    , onInit
     )
 
+{-|
+
+@docs TestCase, make
+
+@docs addActions, setActions
+
+@docs onInit
+
+-}
+
 import Expect exposing (Expectation)
-import Framework.Internal.TestCases.TestCase as Internal
+import Framework.Sandbox.Internal.TestCases.TestCase as Internal
 
 
+{-| -}
 type alias TestCase appFlags componentModel componentMsgIn componentMsgOut output =
     Internal.TestCase appFlags componentModel componentMsgIn componentMsgOut output
 
 
+{-| Create a new TestCase
+-}
 make :
     { title : String
     , description : String
-    , test : (componentModel -> output) -> componentModel -> ( componentModel, List componentMsgOut ) -> Expectation
+    , test : (componentModel -> output) -> componentModel -> componentModel -> Expectation
     }
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
 make =
     Internal.make
 
 
-reInit :
+{-| Supply an alternative intial value
+(alternative to your SandboxComponent)
+-}
+onInit :
     appFlags
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
-reInit =
-    Internal.reInit
+onInit =
+    Internal.onInit
 
 
+{-| Replace all current actions with a new list of actions
+-}
 setActions :
     List componentMsgIn
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
@@ -42,19 +56,11 @@ setActions =
     Internal.setActions
 
 
+{-| Append a list of actions to your current actions in place.
+-}
 addActions :
     List componentMsgIn
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
 addActions =
     Internal.addActions
-
-
-toTitle : TestCase appFlags componentModel componentMsgIn componentMsgOut output -> String
-toTitle =
-    Internal.toTitle
-
-
-toDescription : TestCase appFlags componentModel componentMsgIn componentMsgOut output -> String
-toDescription =
-    Internal.toDescription

@@ -1,11 +1,10 @@
 module Example exposing (suite)
 
-import Expect exposing (Expectation)
-import Test exposing (Test, test)
-import Sandbox.Components.Timer.Main as Main
 import Framework.Sandbox as Sandbox
+import Sandbox.Components.Timer.Main as Main
+import Test exposing (Test)
 
 
 suite : Test
 suite =
-    Sandbox.toTest "Timer Component" Main.sandboxed 
+    Sandbox.toTest "Timer Component" Main.sandboxed

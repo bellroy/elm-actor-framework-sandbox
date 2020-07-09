@@ -1,4 +1,4 @@
-module Framework.Internal.TestCases exposing
+module Framework.Sandbox.Internal.TestCases exposing
     ( TestCases
     , empty
     , insert
@@ -8,7 +8,7 @@ module Framework.Internal.TestCases exposing
     )
 
 import Dict exposing (Dict)
-import Framework.Internal.TestCases.TestCase as TestCase exposing (TestCase)
+import Framework.Sandbox.Internal.TestCases.TestCase as TestCase exposing (TestCase)
 
 
 type TestCases appFlags componentModel componentMsgIn componentMsgOut output
