@@ -2,6 +2,7 @@ module Framework.Sandbox.TestCase exposing
     ( TestCase, make
     , addActions, setActions
     , onInit
+    , mockMsgOut
     )
 
 {-|
@@ -12,8 +13,11 @@ module Framework.Sandbox.TestCase exposing
 
 @docs onInit
 
+@docs mockMsgOut
+
 -}
 
+import Browser exposing (UrlRequest(..))
 import Expect exposing (Expectation)
 import Framework.Sandbox.Internal.TestCases.TestCase as Internal
 
@@ -64,3 +68,13 @@ addActions :
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
 addActions =
     Internal.addActions
+
+
+{-| Mock the respons on msgOut's
+-}
+mockMsgOut :
+    (componentMsgOut -> Maybe componentMsgIn)
+    -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
+    -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
+mockMsgOut =
+    Internal.mockMsgOut
