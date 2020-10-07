@@ -15,8 +15,7 @@ import Framework.Sandbox.Internal.TestCases.TestCase exposing (TestCase)
 
 type SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output
     = SandboxComponent
-        { component :
-            Component appFlags componentModel componentMsgIn componentMsgOut output componentMsgIn
+        { component : Component appFlags componentModel componentMsgIn componentMsgOut output componentMsgIn
         , init : appFlags
         , testCases : TestCases appFlags componentModel componentMsgIn componentMsgOut output
         }

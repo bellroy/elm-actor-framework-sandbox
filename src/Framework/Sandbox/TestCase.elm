@@ -2,7 +2,7 @@ module Framework.Sandbox.TestCase exposing
     ( TestCase, make
     , addActions, setActions
     , onInit
-    , mockMsgOut
+    , mockMsgOut, mockRenderPid
     )
 
 {-|
@@ -13,12 +13,13 @@ module Framework.Sandbox.TestCase exposing
 
 @docs onInit
 
-@docs mockMsgOut
+@docs mockMsgOut, mockRenderPid
 
 -}
 
 import Browser exposing (UrlRequest(..))
 import Expect exposing (Expectation)
+import Framework.Actor exposing (Pid)
 import Framework.Sandbox.Internal.TestCases.TestCase as Internal
 
 
@@ -70,11 +71,21 @@ addActions =
     Internal.addActions
 
 
-{-| Mock a response message whenever a msgOut gets called
+{-| Mock a list of response messages whenever a msgOut gets called
 -}
 mockMsgOut :
-    (componentMsgOut -> Maybe componentMsgIn)
+    (componentMsgOut -> List componentMsgIn)
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
 mockMsgOut =
     Internal.mockMsgOut
+
+
+{-| Mock the function that is used to render your internal Pid's
+-}
+mockRenderPid :
+    (Pid -> Maybe output)
+    -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
+    -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
+mockRenderPid =
+    Internal.mockRenderPid

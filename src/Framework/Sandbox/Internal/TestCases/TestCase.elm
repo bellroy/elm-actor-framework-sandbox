@@ -3,6 +3,7 @@ module Framework.Sandbox.Internal.TestCases.TestCase exposing
     , addActions
     , make
     , mockMsgOut
+    , mockRenderPid
     , onInit
     , setActions
     , setResult
@@ -10,12 +11,14 @@ module Framework.Sandbox.Internal.TestCases.TestCase exposing
     , toAppFlags
     , toDescription
     , toOnMsgOut
+    , toRenderPid
     , toResult
     , toTest
     , toTitle
     )
 
 import Expect exposing (Expectation)
+import Framework.Actor exposing (Pid)
 
 
 type TestCase appFlags componentModel componentMsgIn componentMsgOut output
@@ -25,7 +28,8 @@ type TestCase appFlags componentModel componentMsgIn componentMsgOut output
         , appFlags : Maybe appFlags
         , actions : List componentMsgIn
         , test : (componentModel -> output) -> componentModel -> componentModel -> Expectation
-        , onMsgOut : componentMsgOut -> Maybe componentMsgIn
+        , onMsgOut : componentMsgOut -> List componentMsgIn
+        , renderPid : Pid -> Maybe output
         , result : Maybe Expectation
         }
 
@@ -86,7 +90,8 @@ make { title, description, test } =
         , actions = []
         , test = test
         , result = Nothing
-        , onMsgOut = \_ -> Nothing
+        , renderPid = always Nothing
+        , onMsgOut = \_ -> []
         }
 
 
@@ -123,7 +128,7 @@ setResult result (TestCase testCase) =
 
 
 mockMsgOut :
-    (componentMsgOut -> Maybe componentMsgIn)
+    (componentMsgOut -> List componentMsgIn)
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
 mockMsgOut onMsgOut (TestCase testCase) =
@@ -132,6 +137,21 @@ mockMsgOut onMsgOut (TestCase testCase) =
 
 toOnMsgOut :
     TestCase appFlags componentModel componentMsgIn componentMsgOut output
-    -> (componentMsgOut -> Maybe componentMsgIn)
+    -> (componentMsgOut -> List componentMsgIn)
 toOnMsgOut (TestCase { onMsgOut }) =
     onMsgOut
+
+
+mockRenderPid :
+    (Pid -> Maybe output)
+    -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
+    -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
+mockRenderPid renderPid (TestCase testCase) =
+    TestCase { testCase | renderPid = renderPid }
+
+
+toRenderPid :
+    TestCase appFlags componentModel componentMsgIn componentMsgOut output
+    -> (Pid -> Maybe output)
+toRenderPid (TestCase { renderPid }) =
+    renderPid

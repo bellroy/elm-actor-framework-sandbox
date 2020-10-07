@@ -6,16 +6,16 @@ module Framework.Sandbox.Internal.VirtualProgram exposing
     )
 
 import Expect exposing (Expectation)
-import Framework.Actor as Actor
+import Framework.Actor as Actor exposing (Pid)
 import Framework.Sandbox.Internal.SandboxComponent as SandboxComponent exposing (SandboxComponent)
 import Framework.Sandbox.Internal.TestCases.TestCase as TestCase exposing (TestCase)
 
 
 type alias VirtualProgram appFlags componentModel componentMsgIn componentMsgOut output =
-    { init : (componentMsgOut -> Maybe componentMsgIn) -> Maybe appFlags -> ( componentModel, Cmd componentMsgIn )
-    , update : (componentMsgOut -> Maybe componentMsgIn) -> componentMsgIn -> componentModel -> ( componentModel, Cmd componentMsgIn )
+    { init : (componentMsgOut -> List componentMsgIn) -> Maybe appFlags -> ( componentModel, Cmd componentMsgIn )
+    , update : (componentMsgOut -> List componentMsgIn) -> componentMsgIn -> componentModel -> ( componentModel, Cmd componentMsgIn )
     , subscriptions : componentModel -> Sub componentMsgIn
-    , view : componentModel -> output
+    , view : (Pid -> Maybe output) -> componentModel -> output
     }
 
 
@@ -46,16 +46,13 @@ toVirtualProgram sandboxComponent =
         afterUpdate onMsgOut ( model, listMsgOut, cmd ) =
             List.foldl
                 (\msgOut ( model_, cmd_ ) ->
-                    case onMsgOut msgOut of
-                        Just msgIn ->
-                            update onMsgOut msgIn model_
-                                |> Tuple.mapSecond
-                                    (\cmd__ ->
-                                        Cmd.batch [ cmd_, cmd__ ]
-                                    )
-
-                        Nothing ->
-                            ( model_, cmd_ )
+                    List.foldl
+                        (\msgIn ( model__, cmd__ ) ->
+                            update onMsgOut msgIn model__
+                                |> Tuple.mapSecond (\cmd___ -> Cmd.batch [ cmd__, cmd___ ])
+                        )
+                        ( model_, cmd_ )
+                        (onMsgOut msgOut)
                 )
                 ( model, cmd )
                 listMsgOut
@@ -63,8 +60,8 @@ toVirtualProgram sandboxComponent =
         subscriptions =
             component.subscriptions
 
-        view model =
-            component.view identity model (always Nothing)
+        view renderPid model =
+            component.view identity model renderPid
     in
     { init = init
     , update = update
@@ -106,9 +103,12 @@ testTestCase virtualProgram testCase =
     let
         ( initialState, resultState ) =
             runTestCase virtualProgram testCase
+
+        renderPid =
+            TestCase.toRenderPid testCase
     in
     TestCase.toTest
         testCase
-        virtualProgram.view
+        (virtualProgram.view renderPid)
         initialState
         resultState

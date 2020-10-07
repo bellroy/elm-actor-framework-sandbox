@@ -2,14 +2,12 @@ module Sandbox.Components.Timer.Main exposing (Model, MsgIn(..), component, main
 
 import Expect
 import Framework.Actor exposing (Component)
-import Framework.Message exposing (FrameworkMessage)
 import Framework.Sandbox as Sandbox exposing (SandboxComponent)
 import Framework.Sandbox.Browser as SandboxBrowser
 import Framework.Sandbox.TestCase as TestCase
 import Html exposing (Html)
 import Html.Attributes as HtmlA
 import Html.Events as HtmlE
-import Test
 import Test.Html.Query as THQ
 import Test.Html.Selector as THS
 import Time
@@ -119,7 +117,13 @@ sandboxed =
                     \render _ model ->
                         render model
                             |> THQ.fromHtml
-                            |> THQ.has [ THS.text "60", THS.text "start", THS.text "stop", THS.text "-10", THS.text "+10" ]
+                            |> THQ.has
+                                [ THS.text "60"
+                                , THS.text "start"
+                                , THS.text "stop"
+                                , THS.text "-10"
+                                , THS.text "+10"
+                                ]
                 }
                 |> TestCase.setActions [ AddSeconds 10 ]
             )
@@ -127,7 +131,7 @@ sandboxed =
             (TestCase.make
                 { title = "AddSeconds"
                 , description = "Add 2 * 10 Seconds using two messages to a fresh Timer"
-                , test = \_ _ { seconds } -> Expect.equal seconds 70
+                , test = \_ a b -> Expect.equal (b.seconds - a.seconds) 20
                 }
                 |> TestCase.setActions [ AddSeconds 10, AddSeconds 10 ]
             )

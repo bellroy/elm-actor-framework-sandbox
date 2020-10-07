@@ -26,6 +26,7 @@ type DocumentOperation appFlags componentModel componentMsgIn componentMsgOut ou
 type alias DocumentModel appFlags componentModel componentMsgIn componentMsgOut output =
     { componentModel : componentModel
     , sandboxComponent : SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output
+    , prependHtml : List (Html Never)
     }
 
 
@@ -66,11 +67,12 @@ init :
     -> SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output
     -> ( DocumentModel appFlags componentModel componentMsgIn componentMsgOut output, Cmd (DocumentMsg appFlags componentModel componentMsgIn componentMsgOut output) )
 init virtualProgram sandboxComponent =
-    virtualProgram.init (always Nothing) Nothing
+    virtualProgram.init (always []) Nothing
         |> Tuple.mapFirst
             (\componentModel ->
                 { componentModel = componentModel
                 , sandboxComponent = sandboxComponent
+                , prependHtml = []
                 }
             )
         |> Tuple.mapSecond (Cmd.map MsgForComponent)
@@ -84,7 +86,7 @@ update :
 update virtualProgram msg model =
     case msg of
         MsgForComponent frameworkMessage ->
-            virtualProgram.update (always Nothing) frameworkMessage model.componentModel
+            virtualProgram.update (always []) frameworkMessage model.componentModel
                 |> Tuple.mapFirst
                     (\updatedFrameworkModel ->
                         { model | componentModel = updatedFrameworkModel }
@@ -119,7 +121,7 @@ view :
 view toHtml virtualProgram { componentModel, sandboxComponent } =
     let
         output =
-            toHtml <| virtualProgram.view componentModel
+            toHtml <| virtualProgram.view (always Nothing) componentModel
     in
     layout output sandboxComponent
 
