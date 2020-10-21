@@ -74,7 +74,7 @@ addActions =
 {-| Mock a list of response messages whenever a msgOut gets called
 -}
 mockMsgOut :
-    (componentMsgOut -> List componentMsgIn)
+    (Int -> componentMsgOut -> List componentMsgIn)
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
 mockMsgOut =

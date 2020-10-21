@@ -28,7 +28,7 @@ type TestCase appFlags componentModel componentMsgIn componentMsgOut output
         , appFlags : Maybe appFlags
         , actions : List componentMsgIn
         , test : (componentModel -> output) -> componentModel -> componentModel -> Expectation
-        , onMsgOut : componentMsgOut -> List componentMsgIn
+        , onMsgOut : Int -> componentMsgOut -> List componentMsgIn
         , renderPid : Pid -> Maybe output
         , result : Maybe Expectation
         }
@@ -91,7 +91,7 @@ make { title, description, test } =
         , test = test
         , result = Nothing
         , renderPid = always Nothing
-        , onMsgOut = \_ -> []
+        , onMsgOut = \_ _ -> []
         }
 
 
@@ -128,7 +128,7 @@ setResult result (TestCase testCase) =
 
 
 mockMsgOut :
-    (componentMsgOut -> List componentMsgIn)
+    (Int -> componentMsgOut -> List componentMsgIn)
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
     -> TestCase appFlags componentModel componentMsgIn componentMsgOut output
 mockMsgOut onMsgOut (TestCase testCase) =
@@ -137,7 +137,7 @@ mockMsgOut onMsgOut (TestCase testCase) =
 
 toOnMsgOut :
     TestCase appFlags componentModel componentMsgIn componentMsgOut output
-    -> (componentMsgOut -> List componentMsgIn)
+    -> (Int -> componentMsgOut -> List componentMsgIn)
 toOnMsgOut (TestCase { onMsgOut }) =
     onMsgOut
 

@@ -12,8 +12,8 @@ import Framework.Sandbox.Internal.TestCases.TestCase as TestCase exposing (TestC
 
 
 type alias VirtualProgram appFlags componentModel componentMsgIn componentMsgOut output =
-    { init : (componentMsgOut -> List componentMsgIn) -> Maybe appFlags -> ( componentModel, Cmd componentMsgIn )
-    , update : (componentMsgOut -> List componentMsgIn) -> componentMsgIn -> componentModel -> ( componentModel, Cmd componentMsgIn )
+    { init : (Int -> componentMsgOut -> List componentMsgIn) -> Maybe appFlags -> ( componentModel, Cmd componentMsgIn )
+    , update : (Int -> componentMsgOut -> List componentMsgIn) -> componentMsgIn -> componentModel -> ( componentModel, Cmd componentMsgIn )
     , subscriptions : componentModel -> Sub componentMsgIn
     , view : (Pid -> Maybe output) -> componentModel -> output
     }
@@ -44,15 +44,15 @@ toVirtualProgram sandboxComponent =
                 |> afterUpdate onMsgOut
 
         afterUpdate onMsgOut ( model, listMsgOut, cmd ) =
-            List.foldl
-                (\msgOut ( model_, cmd_ ) ->
+            indexedFoldl
+                (\index msgOut ( model_, cmd_ ) ->
                     List.foldl
                         (\msgIn ( model__, cmd__ ) ->
                             update onMsgOut msgIn model__
                                 |> Tuple.mapSecond (\cmd___ -> Cmd.batch [ cmd__, cmd___ ])
                         )
                         ( model_, cmd_ )
-                        (onMsgOut msgOut)
+                        (onMsgOut index msgOut)
                 )
                 ( model, cmd )
                 listMsgOut
@@ -112,3 +112,11 @@ testTestCase virtualProgram testCase =
         (virtualProgram.view renderPid)
         initialState
         resultState
+
+
+indexedFoldl : (Int -> a -> b -> b) -> b -> List a -> b
+indexedFoldl f b =
+    List.foldl
+        (\a ( i, b_ ) -> ( i + 1, f i a b_ ))
+        ( 0, b )
+        >> Tuple.second

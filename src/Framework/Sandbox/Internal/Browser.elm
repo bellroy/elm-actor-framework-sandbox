@@ -67,7 +67,7 @@ init :
     -> SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output
     -> ( DocumentModel appFlags componentModel componentMsgIn componentMsgOut output, Cmd (DocumentMsg appFlags componentModel componentMsgIn componentMsgOut output) )
 init virtualProgram sandboxComponent =
-    virtualProgram.init (always []) Nothing
+    virtualProgram.init (\_ _ -> []) Nothing
         |> Tuple.mapFirst
             (\componentModel ->
                 { componentModel = componentModel
@@ -86,7 +86,7 @@ update :
 update virtualProgram msg model =
     case msg of
         MsgForComponent frameworkMessage ->
-            virtualProgram.update (always []) frameworkMessage model.componentModel
+            virtualProgram.update (\_ _ -> []) frameworkMessage model.componentModel
                 |> Tuple.mapFirst
                     (\updatedFrameworkModel ->
                         { model | componentModel = updatedFrameworkModel }
