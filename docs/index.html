@@ -5429,9 +5429,9 @@ var $author$project$Framework$Internal$SandboxComponent$toTestCases = function (
 	return $author$project$Framework$Internal$TestCases$toList(testCases);
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $tricycle$elm_actor_framework$Framework$Internal$Pid$System = {$: 'System'};
-var $tricycle$elm_actor_framework$Framework$Internal$Pid$system = $tricycle$elm_actor_framework$Framework$Internal$Pid$System;
-var $tricycle$elm_actor_framework$Framework$Actor$pidSystem = $tricycle$elm_actor_framework$Framework$Internal$Pid$system;
+var $bellroy$elm_actor_framework$Framework$Internal$Pid$System = {$: 'System'};
+var $bellroy$elm_actor_framework$Framework$Internal$Pid$system = $bellroy$elm_actor_framework$Framework$Internal$Pid$System;
+var $bellroy$elm_actor_framework$Framework$Actor$pidSystem = $bellroy$elm_actor_framework$Framework$Internal$Pid$system;
 var $author$project$Framework$Internal$SandboxComponent$toComponent = function (_v0) {
 	var component = _v0.a.component;
 	return component;
@@ -5505,7 +5505,7 @@ var $author$project$Framework$Internal$VirtualProgram$toVirtualProgram = functio
 				afterUpdate,
 				onMsgOut,
 				component.init(
-					_Utils_Tuple2($tricycle$elm_actor_framework$Framework$Actor$pidSystem, appFlags)));
+					_Utils_Tuple2($bellroy$elm_actor_framework$Framework$Actor$pidSystem, appFlags)));
 		});
 	return {init: init, subscriptions: subscriptions, update: update, view: view};
 };
